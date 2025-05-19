@@ -65,7 +65,7 @@ export default function Home() {
             </div>
             <div className="relative aspect-square">
               <Image
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/DALL%C2%B7E%202025-02-04%2021.25.20%20-%20A%20professional%20and%20modern%20hero%20icon%20for%20a%20software%20consulting%20firm.%20The%20icon%20should%20feature%20a%20sleek%20laptop%20or%20digital%20screen%20displaying%20a%20futuristic%20U-VgprYU9NvQsU3a1MJXpEuivVMvLm7i.webp"
+                src="/hero-image.png"
                 alt="Futuristic laptop interface representing modern software solutions"
                 width={600}
                 height={600}
