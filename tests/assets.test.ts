@@ -17,9 +17,7 @@ function sourceFiles(dir: string): string[] {
 }
 
 describe("public assets", () => {
-  // TODO(Task 10): revert to `it(` once the OG images exist. Deliberately
-  // inverted so the suite stays green while sections are built out.
-  it.fails("every asset referenced in source exists in public/", () => {
+  it("every asset referenced in source exists in public/", () => {
     const missing: string[] = []
     for (const dir of ["app", "components"]) {
       for (const file of sourceFiles(path.join(ROOT, dir))) {
