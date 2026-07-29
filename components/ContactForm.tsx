@@ -1,103 +1,181 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+
+type Status = "idle" | "submitting" | "success" | "error"
+type FieldName = "name" | "email" | "message"
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+const field =
+  "w-full border-0 border-b border-rule-inverse bg-transparent pb-2.5 text-[13px] text-on-ink placeholder:text-on-ink-dim focus:border-on-ink focus:outline-none focus:ring-0"
+
+const FEEDBACK_ID = "contact-form-feedback"
 
 export default function ContactForm() {
-  const [contactForm, setContactForm] = useState({
-    name: "",
-    email: "",
-    message: "",
-  })
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitMessage, setSubmitMessage] = useState("")
+  const [values, setValues] = useState({ name: "", email: "", message: "" })
+  const [status, setStatus] = useState<Status>("idle")
+  const [feedback, setFeedback] = useState("")
+  const [invalidField, setInvalidField] = useState<FieldName | null>(null)
+  const [botcheck, setBotcheck] = useState(false)
 
-  const handleContactFormSubmission = async (e: React.FormEvent) => {
+  const set = (key: keyof typeof values) => (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => setValues({ ...values, [key]: e.target.value })
+
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setIsSubmitting(true)
-    setSubmitMessage("")
 
-    const formData = new FormData(e.target as HTMLFormElement)
+    if (!values.name.trim()) {
+      setStatus("error")
+      setInvalidField("name")
+      setFeedback("Please add your name.")
+      return
+    }
 
-    formData.append("access_key", process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY || "")
-    formData.append("subject", `Consulting Contact Form Submission`)
-    formData.append("name", contactForm.name)
-    formData.append("email", contactForm.email)
-    formData.append("message", contactForm.message)
+    if (!EMAIL_RE.test(values.email)) {
+      setStatus("error")
+      setInvalidField("email")
+      setFeedback("That doesn't look like a valid email address.")
+      return
+    }
+
+    if (!values.message.trim()) {
+      setStatus("error")
+      setInvalidField("message")
+      setFeedback("Let me know what you're working on.")
+      return
+    }
+
+    setInvalidField(null)
+
+    const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY
+    if (!accessKey) {
+      setStatus("error")
+      setFeedback("The form isn't configured right now — email me directly at jack@not-so-simple.com.")
+      return
+    }
+
+    setStatus("submitting")
+    setFeedback("")
 
     try {
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          access_key: accessKey,
+          subject: "New enquiry from not-so-simple.com",
+          name: values.name,
+          email: values.email,
+          message: values.message,
+          botcheck,
+        }),
       })
 
-      const json = await response.json()
-      if (response.status === 200) {
-        setSubmitMessage(json.message)
-        setContactForm({
-          name: "",
-          email: "",
-          message: "",
-        })
-      } else {
-        throw new Error(json.message || "Submission failed")
+      const json = await response.json().catch(() => ({}))
+
+      if (!response.ok || json?.success === false) {
+        throw new Error("submission rejected")
       }
-    } catch (error) {
-      console.error("Error submitting form:", error)
-      setSubmitMessage("There was an error submitting your message. Please try again.")
-    } finally {
-      setIsSubmitting(false)
+
+      setStatus("success")
+      setFeedback("Thanks — that came through. I'll get back to you.")
+      setValues({ name: "", email: "", message: "" })
+    } catch {
+      setStatus("error")
+      setFeedback("That didn't go through. Try again, or email jack@not-so-simple.com.")
     }
   }
 
   return (
-    <form onSubmit={handleContactFormSubmission} className="max-w-xl mx-auto space-y-6">
-      <div className="space-y-2">
-        <Input
-          placeholder="Your Name"
-          name="name"
-          value={contactForm.name}
-          onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
-          className="bg-white/5 border-white/10 text-white placeholder:text-gray-400"
-          required
-        />
+    <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
+      {/* Web3Forms honeypot: hidden from sighted users and assistive tech.
+          Bots that auto-fill every field will populate this; humans never
+          see or reach it, so it must not affect legitimate submissions. */}
+      <input
+        type="checkbox"
+        name="botcheck"
+        checked={botcheck}
+        onChange={(e) => setBotcheck(e.target.checked)}
+        className="hidden"
+        style={{ display: "none" }}
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+      />
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label htmlFor="name" className="sr-only">
+            Name
+          </label>
+          <input
+            id="name"
+            name="name"
+            placeholder="Name"
+            value={values.name}
+            onChange={set("name")}
+            required
+            aria-invalid={invalidField === "name"}
+            aria-describedby={invalidField === "name" ? FEEDBACK_ID : undefined}
+            className={field}
+          />
+        </div>
+        <div>
+          <label htmlFor="email" className="sr-only">
+            Email
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Email"
+            value={values.email}
+            onChange={set("email")}
+            required
+            aria-invalid={invalidField === "email"}
+            aria-describedby={invalidField === "email" ? FEEDBACK_ID : undefined}
+            className={field}
+          />
+        </div>
       </div>
-      <div className="space-y-2">
-        <Input
-          type="email"
-          name="email"
-          placeholder="Your Email"
-          value={contactForm.email}
-          onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
-          className="bg-white/5 border-white/10 text-white placeholder:text-gray-400"
-          required
-        />
-      </div>
-      <div className="space-y-2">
-        <Textarea
-          placeholder="Your Message"
+
+      <div>
+        <label htmlFor="message" className="sr-only">
+          What are you working on?
+        </label>
+        <textarea
+          id="message"
           name="message"
-          value={contactForm.message}
-          onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
-          className="bg-white/5 border-white/10 text-white placeholder:text-gray-400 min-h-[150px]"
+          placeholder="What are you working on?"
+          value={values.message}
+          onChange={set("message")}
           required
+          rows={3}
+          aria-invalid={invalidField === "message"}
+          aria-describedby={invalidField === "message" ? FEEDBACK_ID : undefined}
+          className={`${field} resize-none`}
         />
       </div>
-      <Button
+
+      <button
         type="submit"
-        className="w-full bg-[#7F62F4] hover:bg-[#6B4FE6] transition-colors"
-        disabled={isSubmitting}
+        disabled={status === "submitting"}
+        className="mt-2 self-start rounded-sm bg-on-ink px-6 py-2.5 text-[13.5px] font-medium text-ink transition-opacity disabled:opacity-60"
       >
-        {isSubmitting ? "Sending..." : "Send Message"}
-      </Button>
-      {submitMessage && (
-        <p className={`text-center ${submitMessage.includes("error") ? "text-red-500" : "text-green-500"}`}>
-          {submitMessage}
-        </p>
-      )}
+        {status === "submitting" ? "Sending…" : "Send"}
+      </button>
+
+      <p
+        id={FEEDBACK_ID}
+        role={status === "error" ? "alert" : "status"}
+        className={`text-[13px] ${
+          status === "error" ? "text-on-ink" : "text-on-ink-dim"
+        }`}
+      >
+        {feedback}
+      </p>
     </form>
   )
 }
-

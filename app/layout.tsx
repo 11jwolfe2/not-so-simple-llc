@@ -1,51 +1,54 @@
 import "./globals.css"
-import { Inter } from "next/font/google"
 import type React from "react"
-import Navigation from "@/components/Navigation"
-import Footer from "@/components/Footer"
-import type { Metadata } from 'next';
+import { Inter, Instrument_Serif } from "next/font/google"
+import type { Metadata } from "next"
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+})
+
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-serif",
+  display: "swap",
+})
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.not-so-simple.com'),
+  metadataBase: new URL("https://www.not-so-simple.com"),
   title: "Not So Simple, LLC",
-  description: "We help startups and enterprises build software that scales — from architecture to implementation.",
+  description:
+    "Software consulting from Jack Wolfe III — architecture and full-stack engineering for teams building systems that have to hold up.",
   icons: {
     icon: [
-      { url: '/favicon.ico', rel: 'shortcut icon' },
-      { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
-      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: "/favicon.ico", rel: "shortcut icon" },
+      { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
     ],
-    apple: '/apple-touch-icon.png',
+    apple: "/apple-touch-icon.png",
   },
-  manifest: '/site.webmanifest',
-  appleWebApp: {
-    title: 'Not So Simple, LLC',
-  },
+  manifest: "/site.webmanifest",
+  appleWebApp: { title: "Not So Simple, LLC" },
   openGraph: {
-    title: 'Not So Simple, LLC',
-    description: 'We help startups and enterprises build software that scales — from architecture to implementation.',
-    url: 'https://www.not-so-simple.com',
-    siteName: 'Not So Simple, LLC',
+    title: "Not So Simple, LLC",
+    description:
+      "Software consulting from Jack Wolfe III — architecture and full-stack engineering for teams building systems that have to hold up.",
+    url: "https://www.not-so-simple.com",
+    siteName: "Not So Simple, LLC",
     images: [
-      {
-        url: '/not-so-simple-og-1200x630.png',
-        width: 1200,
-        height: 630,
-        alt: 'Not So Simple, LLC Logo',
-      },
+      { url: "/og-1200x630.png", width: 1200, height: 630, alt: "Not So Simple, LLC" },
     ],
-    type: 'website',
+    type: "website",
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'Not So Simple, LLC',
-    description: 'Software consulting, strategy, and scalable systems from Not So Simple, LLC.',
-    images: ['/notsosimple_logo_fixed_white_bg.png'],
+    card: "summary_large_image",
+    title: "Not So Simple, LLC",
+    description: "Software consulting — architecture and full-stack engineering.",
+    images: ["/og-1200x630.png"],
   },
-};
-
+}
 
 export default function RootLayout({
   children,
@@ -53,12 +56,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.className} bg-[#0A0A0A] text-white antialiased`}>
-        <Navigation />
-        {children}
-        <Footer />
-      </body>
+    <html lang="en" className={`${inter.variable} ${instrumentSerif.variable}`}>
+      <body className="font-sans">{children}</body>
     </html>
   )
 }
