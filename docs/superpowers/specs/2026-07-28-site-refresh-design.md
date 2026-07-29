@@ -127,8 +127,15 @@ alerts and protection against malicious actors") is factually stale and is
 being replaced, not restyled.
 
 ### 4. Who's Behind It
-New section — does not exist today. Two columns: headshot left (4:5, duotone
-treatment toward the paper/ink palette), name and bio right.
+New section — does not exist today. Two columns: headshot left (4:5), name and
+bio right.
+
+**Headshot:** `public/jack-wolfe.jpg`, cropped 4:5 and rendered in **warm
+monochrome** — `grayscale(1) sepia(.28) contrast(1.06) brightness(1.05)`,
+applied as a CSS filter so the source image stays unmodified and the grade
+stays adjustable. The source photo has a green outdoor background; warm
+monochrome pulls it into the paper/ink palette, which otherwise has no color
+in it at all.
 
 **Jack Wolfe III**
 
@@ -250,10 +257,15 @@ In scope alongside the redesign:
 
 Explicitly out of scope: upgrading to Next.js 15 or Tailwind 4.
 
-## Open Item
+## Known Issue
 
-**Headshot.** Not yet supplied. Bio ships with a placeholder block sized 4:5;
-the real image drops in when available. This does not block any other work.
+**Headshot resolution.** The supplied photo is 324×456; cropped to 4:5 it is
+324×405. The bio slot renders at roughly 300px CSS wide, so the image is at
+about 1× on a standard display and well under 1× on retina — it will look soft
+next to sharp type. Warm monochrome masks this somewhat, which is part of why
+it was chosen. Accepted deliberately rather than overlooked. If a full-size
+original becomes available later, re-crop to 4:5 at ≥800px wide and drop it in
+at the same path; no code changes needed.
 
 ## Verification
 
