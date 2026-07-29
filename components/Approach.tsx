@@ -27,24 +27,26 @@ export default function Approach() {
         Three ways I&rsquo;m usually useful.
       </h2>
 
-      <dl>
+      <ol>
         {rows.map((row, i) => (
-          <div
+          <li
             key={row.n}
             className={`grid gap-4 border-t border-rule py-7 md:grid-cols-[64px_1.1fr_1.4fr] md:gap-8 ${
               i === rows.length - 1 ? "border-b" : ""
             }`}
           >
-            <span className="font-serif text-xl text-ink-faint">{row.n}</span>
-            <dt className="text-xl font-medium tracking-[-0.015em]">
+            <span aria-hidden="true" className="font-serif text-xl text-ink-faint">
+              {row.n}
+            </span>
+            <h3 className="text-xl font-medium tracking-[-0.015em]">
               {row.title}
-            </dt>
-            <dd className="text-[15px] leading-[1.65] text-ink-dim">
+            </h3>
+            <p className="text-[15px] leading-[1.65] text-ink-dim">
               {row.body}
-            </dd>
-          </div>
+            </p>
+          </li>
         ))}
-      </dl>
+      </ol>
     </section>
   )
 }
