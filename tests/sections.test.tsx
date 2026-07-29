@@ -4,6 +4,7 @@ import Nav from "@/components/Nav"
 import Hero from "@/components/Hero"
 import Approach from "@/components/Approach"
 import SelectedWork from "@/components/SelectedWork"
+import Bio from "@/components/Bio"
 
 describe("Nav", () => {
   it("renders the wordmark and the three anchors", () => {
@@ -84,6 +85,24 @@ describe("SelectedWork", () => {
     expect(imgs).toHaveLength(1)
     for (const img of imgs) {
       expect(img.getAttribute("src")).toMatch(/^\/work-/)
+    }
+  })
+})
+
+describe("Bio", () => {
+  it("renders the name, both domain figures, and the location", () => {
+    render(<Bio />)
+    expect(screen.getByText("Jack Wolfe III")).toBeInTheDocument()
+    expect(screen.getByText("05")).toBeInTheDocument()
+    expect(screen.getByText("06")).toBeInTheDocument()
+    expect(screen.getByText(/Streetsboro, Ohio/)).toBeInTheDocument()
+  })
+
+  it("names no employer", () => {
+    const { container } = render(<Bio />)
+    const text = container.textContent ?? ""
+    for (const forbidden of ["NASA", "Fifth Third", "Undertime"]) {
+      expect(text).not.toContain(forbidden)
     }
   })
 })
