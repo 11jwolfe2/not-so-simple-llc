@@ -3,7 +3,7 @@ export default function Hero() {
     <section className="mx-auto max-w-content px-6 pb-16 pt-32 md:px-14 md:pb-24 md:pt-40">
       <p className="eyebrow mb-8 md:mb-11">Software Consulting</p>
 
-      <h1 className="font-serif text-[15vw] leading-[0.92] tracking-[-0.02em] sm:text-[64px] md:text-[92px]">
+      <h1 className="font-serif text-[clamp(44px,13vw,92px)] leading-[0.92] tracking-[-0.02em]">
         Not so
         <br />
         simple.
