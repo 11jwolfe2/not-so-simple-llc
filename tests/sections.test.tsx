@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest"
 import { render, screen } from "@testing-library/react"
 import Nav from "@/components/Nav"
 import Hero from "@/components/Hero"
+import Approach from "@/components/Approach"
 
 describe("Nav", () => {
   it("renders the wordmark and the three anchors", () => {
@@ -29,5 +30,18 @@ describe("Hero", () => {
       "href",
       "#work"
     )
+  })
+})
+
+describe("Approach", () => {
+  it("renders three numbered rows with their titles", () => {
+    const { container } = render(<Approach />)
+    expect(container.querySelector("#approach")).toBeInTheDocument()
+    expect(screen.getByText("Software architecture")).toBeInTheDocument()
+    expect(screen.getByText(/Full.?stack development/)).toBeInTheDocument()
+    expect(screen.getByText("Technical consulting")).toBeInTheDocument()
+    for (const n of ["01", "02", "03"]) {
+      expect(screen.getByText(n)).toBeInTheDocument()
+    }
   })
 })
