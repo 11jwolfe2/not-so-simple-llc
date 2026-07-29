@@ -35,13 +35,13 @@ export default function Bio() {
           </p>
 
           <dl className="mt-8 flex border-t border-rule">
-            <div className="flex-[5] border-r border-rule pr-5 pt-3.5">
-              <dd className="font-serif text-2xl leading-none">05</dd>
+            <div className="flex flex-[5] flex-col-reverse border-r border-rule pr-5 pt-3.5">
               <dt className="eyebrow mt-1.5">Years / Aerospace</dt>
+              <dd className="font-serif text-2xl leading-none">05</dd>
             </div>
-            <div className="flex-[6] pl-5 pt-3.5">
-              <dd className="font-serif text-2xl leading-none">06</dd>
+            <div className="flex flex-[6] flex-col-reverse pl-5 pt-3.5">
               <dt className="eyebrow mt-1.5">Years / Finance</dt>
+              <dd className="font-serif text-2xl leading-none">06</dd>
             </div>
           </dl>
 
