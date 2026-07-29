@@ -5,7 +5,7 @@ export default function Bio() {
     <section className="mx-auto max-w-content px-6 py-16 md:px-14 md:py-20">
       <p className="eyebrow mb-8 md:mb-11">Who&rsquo;s Behind It</p>
 
-      <div className="grid gap-9 md:grid-cols-[300px_1fr] md:gap-13">
+      <div className="grid gap-9 md:grid-cols-[300px_1fr]">
         <Image
           src="/jack-wolfe.jpg"
           alt="Jack Wolfe III"

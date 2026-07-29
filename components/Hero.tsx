@@ -9,7 +9,7 @@ export default function Hero() {
         simple.
       </h1>
 
-      <div className="mt-10 grid items-end gap-8 md:mt-13 md:grid-cols-2 md:gap-14">
+      <div className="mt-10 grid items-end gap-8 md:grid-cols-2 md:gap-14">
         <p className="text-[17px] leading-[1.65] text-ink-dim">
           The simple version of the problem is rarely the one that ships. I do
           architecture and full&#8209;stack engineering for teams building

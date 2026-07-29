@@ -29,7 +29,7 @@ export default function SelectedWork() {
         </h2>
 
         <div className="flex flex-col gap-14 md:gap-16">
-          {projects.map((project, i) => (
+          {projects.map((project) => (
             <article
               key={project.title}
               className={
@@ -38,11 +38,7 @@ export default function SelectedWork() {
                   : "border-t border-rule pt-9"
               }
             >
-              <div
-                className={
-                  project.image && i % 2 === 1 ? "md:order-2" : undefined
-                }
-              >
+              <div>
                 <p className="eyebrow mb-3.5">{project.eyebrow}</p>
                 <h3 className="mb-3.5 font-serif text-[34px] tracking-[-0.02em]">
                   {project.title}
@@ -68,9 +64,7 @@ export default function SelectedWork() {
                   alt={`${project.title} homepage`}
                   width={1200}
                   height={900}
-                  className={`aspect-[4/3] w-full border border-rule object-cover ${
-                    i % 2 === 1 ? "md:order-1" : ""
-                  }`}
+                  className="aspect-[4/3] w-full border border-rule object-cover"
                 />
               )}
             </article>

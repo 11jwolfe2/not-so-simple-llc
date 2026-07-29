@@ -27,7 +27,3 @@ yarn-error.log*
 next-env.d.ts
 # brainstorming visual companion
 .superpowers/
-
-# loose photo exports
-*_1_201_a.jpeg
-*_4_5005_c.jpeg
