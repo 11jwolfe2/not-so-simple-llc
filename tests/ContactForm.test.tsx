@@ -75,4 +75,33 @@ describe("ContactForm", () => {
     expect(await screen.findByText(/email me directly/i)).toBeInTheDocument()
     expect(fetchMock).not.toHaveBeenCalled()
   })
+
+  it("rejects an empty name without calling the API", async () => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal("fetch", fetchMock)
+    const user = userEvent.setup()
+    render(<ContactForm />)
+
+    await user.type(screen.getByLabelText(/email/i), "ada@example.com")
+    await user.type(screen.getByLabelText(/working on/i), "Hello.")
+    await user.click(screen.getByRole("button", { name: /send/i }))
+
+    expect(await screen.findByText(/add your name/i)).toBeInTheDocument()
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it("rejects a whitespace-only message without calling the API", async () => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal("fetch", fetchMock)
+    const user = userEvent.setup()
+    render(<ContactForm />)
+
+    await user.type(screen.getByLabelText(/name/i), "Ada Lovelace")
+    await user.type(screen.getByLabelText(/email/i), "ada@example.com")
+    await user.type(screen.getByLabelText(/working on/i), "   ")
+    await user.click(screen.getByRole("button", { name: /send/i }))
+
+    expect(await screen.findByText(/what you're working on/i)).toBeInTheDocument()
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
 })

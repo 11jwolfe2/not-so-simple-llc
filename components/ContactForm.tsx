@@ -21,9 +21,21 @@ export default function ContactForm() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
 
+    if (!values.name.trim()) {
+      setStatus("error")
+      setFeedback("Please add your name.")
+      return
+    }
+
     if (!EMAIL_RE.test(values.email)) {
       setStatus("error")
       setFeedback("That doesn't look like a valid email address.")
+      return
+    }
+
+    if (!values.message.trim()) {
+      setStatus("error")
+      setFeedback("Let me know what you're working on.")
       return
     }
 
