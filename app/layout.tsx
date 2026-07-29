@@ -1,12 +1,22 @@
 import "./globals.css"
-import { Inter } from "next/font/google"
 import type React from "react"
-import Navigation from "@/components/Navigation"
-import Footer from "@/components/Footer"
-import type { Metadata } from 'next';
+import { Inter, Instrument_Serif } from "next/font/google"
+import type { Metadata } from "next"
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+})
 
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-serif",
+  display: "swap",
+})
+
+// unchanged in this task — rewritten in Task 10
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.not-so-simple.com'),
   title: "Not So Simple, LLC",
@@ -44,8 +54,7 @@ export const metadata: Metadata = {
     description: 'Software consulting, strategy, and scalable systems from Not So Simple, LLC.',
     images: ['/notsosimple_logo_fixed_white_bg.png'],
   },
-};
-
+}
 
 export default function RootLayout({
   children,
@@ -53,12 +62,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.className} bg-[#0A0A0A] text-white antialiased`}>
-        <Navigation />
-        {children}
-        <Footer />
-      </body>
+    <html lang="en" className={`${inter.variable} ${instrumentSerif.variable}`}>
+      <body className="font-sans">{children}</body>
     </html>
   )
 }
