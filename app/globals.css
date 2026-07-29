@@ -19,6 +19,8 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    /* Fixed header is 56px tall; add a little breathing room above anchors. */
+    scroll-padding-top: 72px;
   }
   body {
     @apply bg-paper text-ink antialiased;

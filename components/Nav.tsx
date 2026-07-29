@@ -2,7 +2,12 @@
 
 import { Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 
 const items = [
   { href: "#work", label: "Work" },
@@ -38,6 +43,7 @@ export default function Nav() {
             </Button>
           </SheetTrigger>
           <SheetContent side="right" className="w-[280px] border-rule bg-paper">
+            <SheetTitle className="sr-only">Menu</SheetTitle>
             <nav className="mt-10 flex flex-col gap-5">
               {items.map((item) => (
                 <a

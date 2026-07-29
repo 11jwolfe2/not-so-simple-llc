@@ -3,16 +3,21 @@
 import { useState } from "react"
 
 type Status = "idle" | "submitting" | "success" | "error"
+type FieldName = "name" | "email" | "message"
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const field =
   "w-full border-0 border-b border-rule-inverse bg-transparent pb-2.5 text-[13px] text-on-ink placeholder:text-on-ink-dim focus:border-on-ink focus:outline-none focus:ring-0"
 
+const FEEDBACK_ID = "contact-form-feedback"
+
 export default function ContactForm() {
   const [values, setValues] = useState({ name: "", email: "", message: "" })
   const [status, setStatus] = useState<Status>("idle")
   const [feedback, setFeedback] = useState("")
+  const [invalidField, setInvalidField] = useState<FieldName | null>(null)
+  const [botcheck, setBotcheck] = useState(false)
 
   const set = (key: keyof typeof values) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -23,21 +28,26 @@ export default function ContactForm() {
 
     if (!values.name.trim()) {
       setStatus("error")
+      setInvalidField("name")
       setFeedback("Please add your name.")
       return
     }
 
     if (!EMAIL_RE.test(values.email)) {
       setStatus("error")
+      setInvalidField("email")
       setFeedback("That doesn't look like a valid email address.")
       return
     }
 
     if (!values.message.trim()) {
       setStatus("error")
+      setInvalidField("message")
       setFeedback("Let me know what you're working on.")
       return
     }
+
+    setInvalidField(null)
 
     const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY
     if (!accessKey) {
@@ -59,6 +69,7 @@ export default function ContactForm() {
           name: values.name,
           email: values.email,
           message: values.message,
+          botcheck,
         }),
       })
 
@@ -79,6 +90,21 @@ export default function ContactForm() {
 
   return (
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
+      {/* Web3Forms honeypot: hidden from sighted users and assistive tech.
+          Bots that auto-fill every field will populate this; humans never
+          see or reach it, so it must not affect legitimate submissions. */}
+      <input
+        type="checkbox"
+        name="botcheck"
+        checked={botcheck}
+        onChange={(e) => setBotcheck(e.target.checked)}
+        className="hidden"
+        style={{ display: "none" }}
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+      />
+
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="name" className="sr-only">
@@ -91,6 +117,8 @@ export default function ContactForm() {
             value={values.name}
             onChange={set("name")}
             required
+            aria-invalid={invalidField === "name"}
+            aria-describedby={invalidField === "name" ? FEEDBACK_ID : undefined}
             className={field}
           />
         </div>
@@ -106,6 +134,8 @@ export default function ContactForm() {
             value={values.email}
             onChange={set("email")}
             required
+            aria-invalid={invalidField === "email"}
+            aria-describedby={invalidField === "email" ? FEEDBACK_ID : undefined}
             className={field}
           />
         </div>
@@ -123,6 +153,8 @@ export default function ContactForm() {
           onChange={set("message")}
           required
           rows={3}
+          aria-invalid={invalidField === "message"}
+          aria-describedby={invalidField === "message" ? FEEDBACK_ID : undefined}
           className={`${field} resize-none`}
         />
       </div>
@@ -135,16 +167,15 @@ export default function ContactForm() {
         {status === "submitting" ? "Sending…" : "Send"}
       </button>
 
-      {feedback && (
-        <p
-          role="status"
-          className={`text-[13px] ${
-            status === "error" ? "text-on-ink" : "text-on-ink-dim"
-          }`}
-        >
-          {feedback}
-        </p>
-      )}
+      <p
+        id={FEEDBACK_ID}
+        role={status === "error" ? "alert" : "status"}
+        className={`text-[13px] ${
+          status === "error" ? "text-on-ink" : "text-on-ink-dim"
+        }`}
+      >
+        {feedback}
+      </p>
     </form>
   )
 }
