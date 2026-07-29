@@ -775,8 +775,30 @@ git commit -m "feat: add approach section replacing service cards"
 
 Includes replacing the two hotlinked Vercel-blob screenshots with self-hosted captures.
 
+> ### AUTHORIZED AMENDMENT (2026-07-29) — supersedes the steps below where they conflict
+>
+> **`athena.foo` does not resolve.** Verified independently: no A record from
+> Google's resolver for either `athena.foo` or `www.athena.foo`, and `curl`
+> returns `000` on both. `bankfinder.us` resolves and returns 200. Athena is
+> not reachable, cannot be screenshotted, and must not be linked or described
+> as live.
+>
+> The project owner ruled: **keep the Athena entry, but with no link and no
+> "Live" claim.** Concretely, superseding the steps below:
+>
+> 1. **Step 1 captures one screenshot, not two.** Capture only
+>    `https://bankfinder.us` to `public/work-bankfinder.png`. Do not create
+>    `public/work-athena.png` — no placeholder, no substitute image.
+> 2. **Athena's eyebrow is `"Crypto"`,** not `"Crypto / Live"`.
+> 3. **Athena has no `href`, no link label, and no image.** Its entry renders
+>    full-width with a top hairline rule instead of the two-column
+>    text-plus-image layout. Its body copy is unchanged from Step 4.
+> 4. **The component must handle both shapes** — an entry with an image and
+>    link, and an entry with neither. Use the replacement component and tests
+>    given at the end of this task, under "Amended code".
+
 **Files:**
-- Create: `components/SelectedWork.tsx`, `public/work-bankfinder.png`, `public/work-athena.png`
+- Create: `components/SelectedWork.tsx`, `public/work-bankfinder.png`
 - Modify: `app/page.tsx`, `tests/sections.test.tsx`
 
 **Interfaces:**
@@ -945,7 +967,145 @@ npm test && npm run build
 
 ```bash
 git add -A
-git commit -m "feat: add selected work with self-hosted screenshots and accurate copy"
+git commit -m "feat: add selected work with self-hosted screenshot and accurate copy"
+```
+
+### Amended code
+
+These replace the component in Step 4 and the tests in Step 2.
+
+`components/SelectedWork.tsx`:
+
+```tsx
+import Image from "next/image"
+
+const projects = [
+  {
+    eyebrow: "Fintech / Live",
+    title: "BankFinder.us",
+    body: "Most people never switch banks because comparing them is miserable. BankFinder puts modern banking alternatives side by side, so finding a better account takes minutes instead of an afternoon.",
+    href: "https://bankfinder.us",
+    label: "bankfinder.us",
+    image: "/work-bankfinder.png",
+  },
+  {
+    eyebrow: "Crypto",
+    title: "Athena",
+    body: "On‑chain activity breaks conventional bookkeeping. Athena applies AI to blockchain transaction history and turns it into accounting records a human can actually file taxes from.",
+    href: null,
+    label: null,
+    image: null,
+  },
+]
+
+export default function SelectedWork() {
+  return (
+    <section id="work" className="bg-paper-sunk">
+      <div className="mx-auto max-w-content px-6 py-16 md:px-14 md:py-20">
+        <p className="eyebrow mb-3">Selected Work</p>
+        <h2 className="mb-12 font-serif text-[34px] leading-[1.05] tracking-[-0.02em] md:mb-14 md:text-[44px]">
+          Two things worth showing.
+        </h2>
+
+        <div className="flex flex-col gap-14 md:gap-16">
+          {projects.map((project, i) => (
+            <article
+              key={project.title}
+              className={
+                project.image
+                  ? "grid items-center gap-8 md:grid-cols-2 md:gap-11"
+                  : "border-t border-rule pt-9"
+              }
+            >
+              <div
+                className={
+                  project.image && i % 2 === 1 ? "md:order-2" : undefined
+                }
+              >
+                <p className="eyebrow mb-3.5">{project.eyebrow}</p>
+                <h3 className="mb-3.5 font-serif text-[34px] tracking-[-0.02em]">
+                  {project.title}
+                </h3>
+                <p className="max-w-[46em] text-[15px] leading-[1.65] text-ink-dim">
+                  {project.body}
+                </p>
+                {project.href && (
+                  <a
+                    href={project.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-5 inline-block border-b-[1.5px] border-ink pb-0.5 text-[13.5px] font-medium"
+                  >
+                    {project.label} &nearr;
+                  </a>
+                )}
+              </div>
+
+              {project.image && (
+                <Image
+                  src={project.image}
+                  alt={`${project.title} homepage`}
+                  width={1200}
+                  height={900}
+                  className={`aspect-[4/3] w-full border border-rule object-cover ${
+                    i % 2 === 1 ? "md:order-1" : ""
+                  }`}
+                />
+              )}
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+```
+
+Tests appended to `tests/sections.test.tsx`:
+
+```tsx
+import SelectedWork from "@/components/SelectedWork"
+
+describe("SelectedWork", () => {
+  it("renders both projects with current descriptions", () => {
+    const { container } = render(<SelectedWork />)
+    expect(container.querySelector("#work")).toBeInTheDocument()
+    expect(screen.getByText("BankFinder.us")).toBeInTheDocument()
+    expect(screen.getByText("Athena")).toBeInTheDocument()
+
+    // Athena's old copy described a Web3 security/TGE-alerts product.
+    // That was factually wrong; guard against regression.
+    expect(screen.queryByText(/TGE/i)).not.toBeInTheDocument()
+    expect(screen.getByText(/blockchain transaction history/i)).toBeInTheDocument()
+  })
+
+  it("links BankFinder but never links the unreachable Athena domain", () => {
+    const { container } = render(<SelectedWork />)
+    expect(screen.getByRole("link", { name: /bankfinder\.us/i })).toHaveAttribute(
+      "href",
+      "https://bankfinder.us"
+    )
+    const hrefs = Array.from(container.querySelectorAll("a")).map((a) =>
+      a.getAttribute("href")
+    )
+    expect(hrefs.some((h) => h?.includes("athena"))).toBe(false)
+  })
+
+  it("does not claim Athena is live", () => {
+    render(<SelectedWork />)
+    expect(screen.getByText("Crypto")).toBeInTheDocument()
+    expect(screen.queryByText(/Crypto \/ Live/)).not.toBeInTheDocument()
+  })
+
+  it("serves every screenshot locally, never from remote blob storage", () => {
+    const { container } = render(<SelectedWork />)
+    const imgs = Array.from(container.querySelectorAll("img"))
+    expect(imgs).toHaveLength(1)
+    for (const img of imgs) {
+      expect(img.getAttribute("src")).toMatch(/^\/work-/)
+    }
+  })
+})
 ```
 
 ---
