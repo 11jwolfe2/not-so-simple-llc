@@ -5,6 +5,7 @@ import Hero from "@/components/Hero"
 import Approach from "@/components/Approach"
 import SelectedWork from "@/components/SelectedWork"
 import Bio from "@/components/Bio"
+import Contact from "@/components/Contact"
 
 describe("Nav", () => {
   it("renders the wordmark and the three anchors", () => {
@@ -104,5 +105,23 @@ describe("Bio", () => {
     for (const forbidden of ["NASA", "Fifth Third", "Undertime"]) {
       expect(text).not.toContain(forbidden)
     }
+  })
+})
+
+describe("Contact", () => {
+  it("renders a mailto link to the real address", () => {
+    render(<Contact />)
+    expect(
+      screen.getByRole("link", { name: /jack@not-so-simple\.com/ })
+    ).toHaveAttribute("href", "mailto:jack@not-so-simple.com")
+  })
+
+  it("renders the footer without dead links", () => {
+    const { container } = render(<Contact />)
+    expect(screen.getByText(/Not So Simple, LLC/)).toBeInTheDocument()
+    const dead = Array.from(container.querySelectorAll("a")).filter(
+      (a) => a.getAttribute("href") === "#"
+    )
+    expect(dead).toEqual([])
   })
 })

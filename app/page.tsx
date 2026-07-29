@@ -3,6 +3,7 @@ import Hero from "@/components/Hero"
 import Approach from "@/components/Approach"
 import SelectedWork from "@/components/SelectedWork"
 import Bio from "@/components/Bio"
+import Contact from "@/components/Contact"
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
         <Approach />
         <SelectedWork />
         <Bio />
+        <Contact />
       </main>
     </>
   )
