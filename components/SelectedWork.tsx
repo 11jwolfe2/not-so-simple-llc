@@ -10,12 +10,12 @@ const projects = [
     image: "/work-bankfinder.png",
   },
   {
-    eyebrow: "Crypto",
-    title: "Athena",
-    body: "On‑chain activity breaks conventional bookkeeping. Athena applies AI to blockchain transaction history and turns it into accounting records a human can actually file taxes from.",
+    eyebrow: "Web3 Security",
+    title: "Project Athena",
+    body: "Token launches are where crypto's worst actors do their best work. Athena scans contracts as they appear, filters out high‑risk ERC‑20s before money moves, and puts real‑time TGE alerts in front of people early enough to act on.",
     href: null,
     label: null,
-    image: null,
+    image: "/work-athena.png",
   },
 ]
 
@@ -29,16 +29,12 @@ export default function SelectedWork() {
         </h2>
 
         <div className="flex flex-col gap-14 md:gap-16">
-          {projects.map((project) => (
+          {projects.map((project, i) => (
             <article
               key={project.title}
-              className={
-                project.image
-                  ? "grid items-center gap-8 md:grid-cols-2 md:gap-11"
-                  : "border-t border-rule pt-9"
-              }
+              className="grid items-center gap-8 md:grid-cols-2 md:gap-11"
             >
-              <div>
+              <div className={i % 2 === 1 ? "md:order-2" : undefined}>
                 <p className="eyebrow mb-3.5">{project.eyebrow}</p>
                 <h3 className="mb-3.5 font-serif text-[34px] tracking-[-0.02em]">
                   {project.title}
@@ -58,15 +54,15 @@ export default function SelectedWork() {
                 )}
               </div>
 
-              {project.image && (
-                <Image
-                  src={project.image}
-                  alt={`${project.title} homepage`}
-                  width={1200}
-                  height={900}
-                  className="aspect-[4/3] w-full border border-rule object-cover"
-                />
-              )}
+              <Image
+                src={project.image}
+                alt={`${project.title} homepage`}
+                width={1200}
+                height={675}
+                className={`aspect-[16/9] w-full border border-rule object-cover ${
+                  i % 2 === 1 ? "md:order-1" : ""
+                }`}
+              />
             </article>
           ))}
         </div>

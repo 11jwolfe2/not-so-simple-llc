@@ -54,12 +54,15 @@ describe("SelectedWork", () => {
     const { container } = render(<SelectedWork />)
     expect(container.querySelector("#work")).toBeInTheDocument()
     expect(screen.getByText("BankFinder.us")).toBeInTheDocument()
-    expect(screen.getByText("Athena")).toBeInTheDocument()
+    expect(screen.getByText("Project Athena")).toBeInTheDocument()
 
-    // Athena's old copy described a Web3 security/TGE-alerts product.
-    // That was factually wrong; guard against regression.
-    expect(screen.queryByText(/TGE/i)).not.toBeInTheDocument()
-    expect(screen.getByText(/blockchain transaction history/i)).toBeInTheDocument()
+    // Athena is a Web3 security product — contract scanning, high-risk token
+    // filtering, and TGE alerts. An earlier revision wrongly described it as
+    // AI tax accounting; guard against that returning.
+    expect(screen.getByText(/TGE alerts/i)).toBeInTheDocument()
+    expect(
+      screen.queryByText(/accounting records|file taxes/i)
+    ).not.toBeInTheDocument()
   })
 
   it("links BankFinder but never links the unreachable Athena domain", () => {
@@ -76,16 +79,20 @@ describe("SelectedWork", () => {
 
   it("does not claim Athena is live", () => {
     render(<SelectedWork />)
-    expect(screen.getByText("Crypto")).toBeInTheDocument()
-    expect(screen.queryByText(/Crypto \/ Live/)).not.toBeInTheDocument()
+    // Athena's domain does not resolve, so its eyebrow carries no "Live"
+    // marker — unlike BankFinder, which is reachable.
+    expect(screen.getByText("Web3 Security")).toBeInTheDocument()
+    expect(screen.queryByText(/Web3 Security \/ Live/)).not.toBeInTheDocument()
+    expect(screen.getByText("Fintech / Live")).toBeInTheDocument()
   })
 
   it("serves every screenshot locally, never from remote blob storage", () => {
     const { container } = render(<SelectedWork />)
     const imgs = Array.from(container.querySelectorAll("img"))
-    expect(imgs).toHaveLength(1)
+    expect(imgs.length).toBeGreaterThan(0)
     for (const img of imgs) {
       expect(img.getAttribute("src")).toMatch(/^\/work-/)
+      expect(img.getAttribute("src")).not.toMatch(/vercel-storage|https?:/)
     }
   })
 })

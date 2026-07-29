@@ -73,7 +73,8 @@ titles 34px · bio name 38px · body 15–17px/1.65 · eyebrow 10.5px with
 
 ### Layout
 
-- Content column max-width 920px, 56px gutters.
+- Content column max-width 1280px, 56px gutters. (Started at 920px; widened
+  after review on screen — 920px left too much dead margin on a large display.)
 - Sections separated by hairline rules or background shifts — never by cards.
 - Generous vertical rhythm: 76–96px section padding.
 
@@ -117,14 +118,25 @@ Section head: "Two things worth showing."
 > BankFinder puts modern banking alternatives side by side, so finding a
 > better account takes minutes instead of an afternoon.
 
-**Athena** — eyebrow "Crypto / Live" — https://www.athena.foo
-> On-chain activity breaks conventional bookkeeping. Athena applies AI to
-> blockchain transaction history and turns it into accounting records a human
-> can actually file taxes from.
+**Project Athena** — eyebrow "Web3 Security" — no link
+> Token launches are where crypto's worst actors do their best work. Athena
+> scans contracts as they appear, filters out high-risk ERC-20s before money
+> moves, and puts real-time TGE alerts in front of people early enough to act
+> on.
 
-The current Athena description ("Web3 security platform providing real-time TGE
-alerts and protection against malicious actors") is factually stale and is
-being replaced, not restyled.
+Two corrections landed here during execution, in this order:
+
+1. Athena was initially re-described as AI tax-accounting software. That was
+   wrong — Athena is a Web3 security product, and the original site's
+   description was accurate. The copy above reflects the correct product.
+2. **`athena.foo` does not resolve** — no DNS records for the apex or `www`,
+   `curl` returns `000`. The entry therefore carries no link and no "Live"
+   marker, unlike BankFinder. Its screenshot is the archived one recovered
+   from the old site's blob storage and is now self-hosted.
+
+Both project screenshots are 1200×675 and render in a 16:9 frame. Athena's
+source capture is 1.93:1, so 16:9 shows it essentially whole; a 4:3 frame
+clipped its navigation and stat row.
 
 ### 4. Who's Behind It
 New section — does not exist today. Two columns: headshot left (4:5), name and

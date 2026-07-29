@@ -26,7 +26,7 @@ const config: Config = {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
         serif: ["var(--font-serif)", "Georgia", "serif"],
       },
-      maxWidth: { content: "920px" },
+      maxWidth: { content: "1280px" },
     },
   },
   plugins: [],
