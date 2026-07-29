@@ -57,7 +57,7 @@ export default function SelectedWork() {
                     rel="noopener noreferrer"
                     className="mt-5 inline-block border-b-[1.5px] border-ink pb-0.5 text-[13.5px] font-medium"
                   >
-                    {project.label} &nearr;
+                    {project.label} ↗
                   </a>
                 )}
               </div>
