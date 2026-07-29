@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react"
 import Nav from "@/components/Nav"
 import Hero from "@/components/Hero"
 import Approach from "@/components/Approach"
+import SelectedWork from "@/components/SelectedWork"
 
 describe("Nav", () => {
   it("renders the wordmark and the three anchors", () => {
@@ -42,6 +43,47 @@ describe("Approach", () => {
     expect(screen.getByText("Technical consulting")).toBeInTheDocument()
     for (const n of ["01", "02", "03"]) {
       expect(screen.getByText(n)).toBeInTheDocument()
+    }
+  })
+})
+
+describe("SelectedWork", () => {
+  it("renders both projects with current descriptions", () => {
+    const { container } = render(<SelectedWork />)
+    expect(container.querySelector("#work")).toBeInTheDocument()
+    expect(screen.getByText("BankFinder.us")).toBeInTheDocument()
+    expect(screen.getByText("Athena")).toBeInTheDocument()
+
+    // Athena's old copy described a Web3 security/TGE-alerts product.
+    // That was factually wrong; guard against regression.
+    expect(screen.queryByText(/TGE/i)).not.toBeInTheDocument()
+    expect(screen.getByText(/blockchain transaction history/i)).toBeInTheDocument()
+  })
+
+  it("links BankFinder but never links the unreachable Athena domain", () => {
+    const { container } = render(<SelectedWork />)
+    expect(screen.getByRole("link", { name: /bankfinder\.us/i })).toHaveAttribute(
+      "href",
+      "https://bankfinder.us"
+    )
+    const hrefs = Array.from(container.querySelectorAll("a")).map((a) =>
+      a.getAttribute("href")
+    )
+    expect(hrefs.some((h) => h?.includes("athena"))).toBe(false)
+  })
+
+  it("does not claim Athena is live", () => {
+    render(<SelectedWork />)
+    expect(screen.getByText("Crypto")).toBeInTheDocument()
+    expect(screen.queryByText(/Crypto \/ Live/)).not.toBeInTheDocument()
+  })
+
+  it("serves every screenshot locally, never from remote blob storage", () => {
+    const { container } = render(<SelectedWork />)
+    const imgs = Array.from(container.querySelectorAll("img"))
+    expect(imgs).toHaveLength(1)
+    for (const img of imgs) {
+      expect(img.getAttribute("src")).toMatch(/^\/work-/)
     }
   })
 })
